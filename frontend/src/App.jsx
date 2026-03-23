@@ -8,8 +8,11 @@ import ApplicationForm from './components/ApplicationForm';
 import ApplicationDetails from './components/ApplicationDetails';
 import Analytics from './components/Analytics';
 import KanbanBoard from './components/KanbanBoard';
+import Login from './components/Login';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('job_tracker_auth') === 'true');
+  
   const [applications, setApplications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingApp, setEditingApp] = useState(null);
@@ -22,6 +25,10 @@ function App() {
   const [statusFilter, setStatusFilter] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [isLoading, setIsLoading] = useState(true);
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   const fetchApplications = async () => {
     try {
