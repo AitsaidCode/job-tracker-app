@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Filter, Trash2, Edit2, Phone, Calendar, Briefcase, Building2, Flame, Download, LayoutGrid, KanbanSquare, Link as LinkIcon } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Edit2, Phone, Calendar, Briefcase, Building2, Flame, Download, LayoutGrid, KanbanSquare, Link as LinkIcon, LogOut } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from './services/api';
+import api, { supabase } from './services/api';
 import CVBadge from './components/CVBadge';
 import ApplicationForm from './components/ApplicationForm';
 import ApplicationDetails from './components/ApplicationDetails';
@@ -11,7 +11,8 @@ import KanbanBoard from './components/KanbanBoard';
 import Login from './components/Login';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('job_tracker_auth') === 'true');
+  const [session, setSession] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   
   const [applications, setApplications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,9 +27,21 @@ function App() {
   const [viewMode, setViewMode] = useState('grid');
   const [isLoading, setIsLoading] = useState(true);
 
-  if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />;
-  }
+  // Auth Session Management
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsAuthLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const fetchApplications = async () => {
     try {
@@ -42,15 +55,15 @@ function App() {
   };
 
   useEffect(() => {
-    fetchApplications();
-  }, []);
+    if (session) {
+      fetchApplications();
+    }
+  }, [session]);
 
   const handleCreateOrUpdate = async (formData) => {
     try {
       if (editingApp) {
         await api.put(`/applications/${editingApp._id}`, formData);
-        
-        // If updating while viewing, update the viewer too
         if (viewingApp && viewingApp._id === editingApp._id) {
           setViewingApp({ ...formData, _id: editingApp._id });
         }
@@ -111,6 +124,10 @@ function App() {
     setIsDetailsOpen(true);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   const filteredApplications = useMemo(() => {
     return applications.filter(app => {
       const matchesSearch = app.company.toLowerCase().includes(searchTerm.toLowerCase()) || app.position.toLowerCase().includes(searchTerm.toLowerCase());
@@ -129,6 +146,18 @@ function App() {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Login />;
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-10 max-w-[1600px] mx-auto selection:bg-indigo-500/30">
@@ -149,10 +178,15 @@ function App() {
             </div>
           </div>
         </div>
-        <button onClick={() => { setEditingApp(null); setIsModalOpen(true); }} className="glass-button px-6 py-3.5 flex items-center gap-2 group">
-          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-          <span className="tracking-wide font-bold">New Application</span>
-        </button>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <button onClick={() => { setEditingApp(null); setIsModalOpen(true); }} className="glass-button flex-1 md:flex-none px-6 py-3.5 flex items-center justify-center gap-2 group">
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+            <span className="tracking-wide font-bold">New Application</span>
+          </button>
+          <button onClick={handleSignOut} className="p-3.5 rounded-xl border border-white/10 bg-black/40 text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all shadow-lg flex items-center justify-center" title="Sign Out Securely">
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
       </motion.div>
 
       {/* Analytics Summary */}
