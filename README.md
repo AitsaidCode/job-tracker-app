@@ -1,54 +1,38 @@
-# Job Tracker Pro 🚀
+# 🚀 Job Tracker App
+A sleek, modern, and highly interactive application to manage your job hunting pipeline.
 
-A highly-scalable, premium web application designed to help professionals track job applications and easily identify which CV/Resume was used for each role.
+![Application Preview](https://job-tracker-app-psi.vercel.app)
 
 ## ✨ Features
-- **Premium Glassmorphism UI**: Rebuilt from the ground up with a stunning dark-themed glass UI, vibrant gradients, and fluid micro-animations using `framer-motion`.
-- **CV Attachments (Base64)**: Upload your actual PDF or Word document when applying! The backend supports large payloads up to 10MB to securely store encoded files.
-- **Instant Downloads**: Retrieve your attached CV securely with a single click right from the application card.
-- **Smart Filtering & Search**: Find any application instantly by company, position, or quickly toggle by CV Type (Developer, AMOA, IT Ops, Healthcare).
-- **Embedded Database**: Runs seamlessly out of the box using `mongodb-memory-server`, meaning zero external database setup is required for local testing!
+- **UI/UX Excellence**: Completely built with a Premium Glassmorphism Dark Mode using Tailwind CSS and Framer Motion for micro-interactions.
+- **Analytics Dashboard**: Real-time insights covering your Total applications, Interviews, Offers, and Rejections.
+- **Drag & Drop Kanban Board**: Seamlessly toggle between a Grid View and an interactive Kanban Board to move applications across stages.
+- **Detailed Reading View**: Click on any application to bring up a sophisticated Details Modal, showing Salary, Dates, formatted Notes, and more.
+- **CV Management**: Attach the exact PDF/Docx you used for a specific application, and download it later with a single click.
 
-## 🛠️ Tech Stack
-- **Frontend**: React (Vite), Tailwind CSS v4, Framer Motion, Lucide React
-- **Backend**: Node.js, Express, Mongoose
-- **Database**: MongoDB (In-memory configured for instant zero-config deployments)
+## 🏗️ Architecture
+The heavy and slow local Node.js + MongoDB infrastructure has been entirely replaced by a lightning-fast, scalable Serverless architecture:
+- **Frontend**: React + Vite (Hosted on Vercel)
+- **Backend / Database**: Supabase PostgreSQL (Accessed directly via `@supabase/supabase-js`)
+- **Styling & Animation**: Tailwind CSS, Framer Motion, Lucide React
 
----
+## 🚀 Live Demo
+The application is fully deployed and accessible here:
+👉 **[Job Tracker Live on Vercel](https://job-tracker-app-psi.vercel.app)**
 
-## 🚀 Running Locally
+## 💻 Local Development
+If you wish to clone and run the UI locally:
 
-### Prerequisites
-- Node.js installed on your machine.
+```bash
+# Clone the repository
+git clone https://github.com/AitsaidCode/job-tracker-app.git
+cd job-tracker-app/frontend
 
-### 1. Start the Backend
-1. Open a terminal and navigate to the backend directory:
-   ```bash
-   cd job-tracker/backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the backend server (runs on `http://localhost:5001`!):
-   ```bash
-   node server.js
-   ```
+# Install dependencies
+npm install
 
-### 2. Start the Frontend
-1. Open a **new terminal** and navigate to the frontend directory:
-   ```bash
-   cd job-tracker/frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Open `http://localhost:5173` in your browser.
+# Start the development server
+npm run dev
+```
 
-## 📈 Scalability Ready
-The codebase is structured to easily drop the `mongodb-memory-server` and replace the `MONGODB_URI` environment variable with a production cluster (like Supabase Postgres via Prisma or MongoDB Atlas). It is currently configured to run zero-setup for immediate usability!
+*Note: The frontend is configured to communicate with the live Supabase Database.*
