@@ -18,6 +18,8 @@ const applicationSchema = new Schema({
   appliedAt: { type: Date, default: Date.now },
   notes: { type: String, default: '' },
   contact: { type: String, default: '' },
+  jobUrl: { type: String, default: '' },
+  salary: { type: String, default: '' },
   cvFile: {
     name: String,
     data: String,

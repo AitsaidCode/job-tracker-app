@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Building2, Briefcase, Calendar, Phone, FileText, UploadCloud } from 'lucide-react';
+import { X, Building2, Briefcase, Calendar, Phone, FileText, UploadCloud, Link as LinkIcon, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
-    company: '', position: '', cvType: 'CV_DEV', status: 'Applied', appliedAt: new Date().toISOString().split('T')[0], notes: '', contact: ''
+    company: '', position: '', cvType: 'CV_DEV', status: 'Applied', appliedAt: new Date().toISOString().split('T')[0], notes: '', contact: '', jobUrl: '', salary: ''
   });
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
       });
     } else {
       setFormData({
-        company: '', position: '', cvType: 'CV_DEV', status: 'Applied', appliedAt: new Date().toISOString().split('T')[0], notes: '', contact: ''
+        company: '', position: '', cvType: 'CV_DEV', status: 'Applied', appliedAt: new Date().toISOString().split('T')[0], notes: '', contact: '', jobUrl: '', salary: ''
       });
     }
   }, [initialData, isOpen]);
@@ -76,7 +76,7 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
-            className="relative w-full max-w-xl glass-panel rounded-2xl overflow-hidden shadow-2xl my-auto"
+            className="relative w-full max-w-2xl glass-panel rounded-2xl overflow-hidden shadow-2xl my-auto"
           >
             <div className="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-white/5">
               <h3 className="text-xl font-bold text-white tracking-wide flex items-center gap-3">
@@ -90,7 +90,7 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6">
+            <form onSubmit={handleSubmit} className="p-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2 relative group">
                   <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Company</label>
@@ -99,11 +99,18 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                     <input type="text" name="company" required value={formData.company} onChange={handleChange} className="glass-input w-full pl-11" placeholder="Tech Corp" />
                   </div>
                 </div>
-                <div className="sm:col-span-2 relative group">
+                <div className="relative group">
                   <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Position</label>
                   <div className="relative">
                     <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
                     <input type="text" name="position" required value={formData.position} onChange={handleChange} className="glass-input w-full pl-11" placeholder="Lead Developer" />
+                  </div>
+                </div>
+                <div className="relative group">
+                  <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Salary / Comp</label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                    <input type="text" name="salary" value={formData.salary || ''} onChange={handleChange} className="glass-input w-full pl-11" placeholder="$120k - $150k" />
                   </div>
                 </div>
                 <div>
@@ -124,6 +131,13 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                     <option value="Rejected" className="bg-gray-900 text-white">Rejected</option>
                   </select>
                 </div>
+                <div className="relative group sm:col-span-2">
+                  <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Job Link (URL)</label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors pointer-events-none" />
+                    <input type="url" name="jobUrl" value={formData.jobUrl || ''} onChange={handleChange} className="glass-input w-full pl-11" placeholder="https://..." />
+                  </div>
+                </div>
                 <div className="relative group">
                   <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Applied Date</label>
                   <div className="relative">
@@ -143,7 +157,7 @@ const ApplicationForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                   <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Upload Actual CV (Optional)</label>
                   <div className="relative flex items-center">
                     <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" />
-                    <label htmlFor="cvUpload" className="glass-input cursor-pointer flex items-center justify-center text-sm w-full border-dashed border-2 hover:border-indigo-500/50 hover:bg-white/10 transition-colors text-gray-300 gap-2">
+                    <label htmlFor="cvUpload" className="glass-input flex items-center justify-center text-sm w-full border-dashed border-2 hover:border-indigo-500/50 hover:bg-white/10 transition-colors text-gray-300 gap-2 cursor-pointer">
                        <UploadCloud className="w-5 h-5 text-indigo-400" />
                       {formData.cvFile ? `Selected: ${formData.cvFile.name}` : 'Click to Upload Resume Document'}
                     </label>
